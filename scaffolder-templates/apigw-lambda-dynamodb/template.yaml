@@ -1,0 +1,116 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: apigw-lambda-dynamodb
+  title: API Gateway to Lambda to DynamoDB
+  description: Serverless patterns - Amazon API Gateway to AWS Lambda to Amazon DynamoDB
+  tags:
+    - aws
+
+spec:
+  owner: info@roadie.io
+  type: api
+  parameters:
+    - title: Provide some simple information
+      required:
+        - function_name
+        - table_name
+        - owner
+        - region
+      properties:
+        function_name:
+          title: Name
+          type: string
+          description: Unique name of the function
+        table_name:
+          title: Name
+          type: string
+          description: Unique name of the dynamoDB table
+        region:
+          title: Region
+          type: string
+          description: AWS region to deploy to.
+        description:
+          title: Description
+          type: string
+          description: Help others understand what this API is for.
+        owner:
+          title: Owner
+          type: string
+          description: Owner of the Service
+          ui:field: OwnerPicker
+          ui:options:
+            allowedKinds: 
+              - Group
+    - title: Choose a location
+      required:
+        - repoUrl
+      properties: 
+        repoUrl:
+          title: Repository Location
+          type: string
+          ui:field: RepoUrlPicker
+          ui:options:
+            allowedHosts:
+              - github.com
+  steps:
+    - id: template
+      name: Fetch Skeleton + Template
+      action: fetch:template
+      input:
+        url: ./skeleton
+        copyWithoutRender:
+          - .github/workflows/*
+        values:
+          function_name: '{{ parameters.function_name }}'
+          table_name: '{{ parameters.table_name }}'
+          description: '{{ parameters.description }}'
+          destination: '{{ parseRepoUrl parameters.repoUrl }}'
+          owner: '{{ parameters.owner }}'
+
+    - id: publish
+      name: Publish
+      action: publish:github
+      input:
+        allowedHosts: ['github.com']
+        description: 'This is API GW to {{ parameters.function_name }} lambda to {{ parameters.table_name }} table'
+        repoUrl: ${{ parameters.repoUrl }}
+        defaultBranch: main
+        collaborators: [
+          {
+            access: 'admin',
+            username: 'goglobal-admin-team',
+          },
+          {
+            access: 'push',
+            username: 'goglobal-dev-team',
+          },
+          {
+            access: 'maintain',
+            username: 'goglobal-maintainers',
+          },
+          {
+            access: 'pull',
+            username: 'goglobal-readonly-team',
+          },
+
+          {
+            access: 'admin',
+            username: 'devops-admin-team',
+          },
+          {
+            access: 'maintain',
+            username: 'devops-maintainers',
+          },
+          {
+            access: 'pull',
+            username: 'devops-readonly-team',
+          },
+          {
+            access: 'push',
+            username: 'devops-team',
+          }
+        ]
+
+  output:
+    remoteUrl: '{{ steps.publish.output.remoteUrl }}'
