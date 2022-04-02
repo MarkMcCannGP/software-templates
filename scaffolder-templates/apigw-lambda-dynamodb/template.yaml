@@ -62,7 +62,7 @@ spec:
         copyWithoutRender:
           - .github/workflows/*
         values:
-          function_name: S{{ parameters.function_name }}
+          function_name: ${{ parameters.function_name }}
           table_name: ${{ parameters.table_name }}
           description: ${{ parameters.description }}
           destination: ${{ parseRepoUrl parameters.repoUrl }}
