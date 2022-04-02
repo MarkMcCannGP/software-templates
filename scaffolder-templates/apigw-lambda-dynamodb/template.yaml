@@ -62,11 +62,11 @@ spec:
         copyWithoutRender:
           - .github/workflows/*
         values:
-          function_name: '{{ parameters.function_name }}'
-          table_name: '{{ parameters.table_name }}'
-          description: '{{ parameters.description }}'
-          destination: '{{ parseRepoUrl parameters.repoUrl }}'
-          owner: '{{ parameters.owner }}'
+          function_name: S{{ parameters.function_name }}
+          table_name: ${{ parameters.table_name }}
+          description: ${{ parameters.description }}
+          destination: ${{ parseRepoUrl parameters.repoUrl }}
+          owner: ${{ parameters.owner }}
 
     - id: publish
       name: Publish
@@ -113,4 +113,4 @@ spec:
         ]
 
   output:
-    remoteUrl: '{{ steps.publish.output.remoteUrl }}'
+    remoteUrl: ${{ steps.publishToGitHub.output.remoteUrl }}
