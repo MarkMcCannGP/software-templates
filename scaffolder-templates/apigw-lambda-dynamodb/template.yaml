@@ -73,7 +73,7 @@ spec:
       action: publish:github
       input:
         allowedHosts: ['github.com']
-        description: 'This is API GW to {{ parameters.function_name }} lambda to {{ parameters.table_name }} table'
+        description: 'This is API GW to ${{ parameters.function_name }} lambda to ${{ parameters.table_name }} table'
         repoUrl: ${{ parameters.repoUrl }}
         defaultBranch: main
         collaborators: [
